@@ -1,0 +1,4 @@
+-e git://github.com/django/django.git@1.1.X#egg=django
+-e git+http://github.com/benoitc/gunicorn.git#egg=gunicorn
+
+MySQL-python==1.2.3c1

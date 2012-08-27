@@ -1,0 +1,42 @@
+<form action="/login/" method="post" id="login-form"{% if signup %} style="display: none;"{% endif %}>
+  {% if form.errors %}
+    <div class="error">Sorry, I don't think that's not a valid username or password.</div>
+  {% endif %}
+  <div id="login-username" class="clearfix">
+    <label for="username">User name:</label>
+    <input type="text" name="username" value="" id="username" />
+  </div>
+  <div id="login-password" class="clearfix">
+    <label for="password">Password:</label>
+    <input type="password" name="password" value="" id="password" />
+  </div>
+  <div id="login-submit" class="submit clearfix">
+    <input type="submit" value="Login" class="submit" />
+    <input type="hidden" name="next" value="/" />
+  </div>
+</form>
+<form action="/signup/" method="post" id="signup-form"{% if not signup %} style="display: none;"{% endif %}>
+  {% if signup_form.username.errors and data %}<div class="error">{{ signup_form.username.errors }}</div>{% endif %}
+  <div id="signup-username" class="clearfix">
+    <label for="id_username">User name:</label>
+    <input id="id_username" type="text" name="username" maxlength="30" value="{{ data.username }}" />
+  </div>
+  {% if signup_form.email.errors and data %}<div class="error">{{ signup_form.email.errors }}</div>{% endif %}
+  <div id="signup-email" class="clearfix">
+    <label for="id_email">E-mail:</label>
+    <input id="id_email" type="text" name="email" value="{{ data.email }}" />
+  </div>
+  {% if signup_form.password1.errors and data %}<div class="error">{{ signup_form.password1.errors }}</div>{% endif %}
+  <div id="signup-password1" class="clearfix">
+    <label for="id_password1">Password:</label>
+    <input id="id_password1" type="password" name="password1" maxlength="60" value="{{ data.password1 }}" />
+  </div>
+  {% if signup_form.password2.errors and data %}<div class="error">{{ signup_form.password2.errors }}</div>{% endif %}
+  <div id="signup-password2" class="clearfix">
+    <label for="id_password2">Again:</label>
+    <input id="id_password2" type="password" name="password2" maxlength="60" value="{{ data.password2 }}"/>
+  </div>
+  <div id="signup-submit" class="submit clearfix">
+    <input type="submit" value="Signup" class="submit" />
+  </div>
+</form>

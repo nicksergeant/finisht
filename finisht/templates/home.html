@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block body_styles %} id="homepage"{% if user.is_authenticated %} class="logged-in"{% endif %}{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+  var activeLogin = 'Login';
+  {% if has_friends %}
+    var hasFriends = true;
+  {% else %}
+    var hasFriends = false;
+  {% endif %}
+</script>
+{% endblock %}
+
+{% block content %}
+  {% if not user.is_authenticated %}
+  <h1>For developers who do things.</h1>
+  <p>Finisht is where you keep track of your <em>completed</em> development tasks.</p>
+  <div id="main" class="clearfix">
+    <div id="left">
+      <div class="promo first">
+        <h2>Why?</h2>
+        <div class="promo-content">
+          If you're like us, you finish tasks assigned to you from several sources &ndash; email, bug trackers, support tickets, face-to-face interactions, etc.  It's difficult to find a list of all the things you've done.
+        </div>
+      </div>
+      <div class="promo">
+        <img src="/media/images/what-ive-done.gif" alt="At a glance reporting" title="At a glance reporting" />
+        <h2>At a glance reporting</h2>
+        <div class="promo-content">
+          There comes a point in time where it'd be nice to see what you've done in the past, so we made that easy.
+        </div>
+      </div>
+      <div class="promo">
+        <img src="/media/images/done.gif" alt="One-touch operation!" title="One-touch operation!" />
+        <h2>One-touch operation!</h2>
+        <div class="promo-content">
+          No one needs another hoop to jump through in their workflow.  Just type, submit, done.
+        </div>
+      </div>
+    </div>
+    <div id="right">
+      <div id="stats">
+        {{ developer_count }} developers have finisht {{ success_count }} things since we opened up shop.
+      </div>
+      <div id="login-signup">
+        <h3><span id="login">Login</span> or <a href="/signup/" id="signup">Signup</a></h3>
+        {% include "auth_form.html" %}
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div id="main" class="clearfix">
+    {% include "navigation.html" %}
+    {% if request.GET %}
+    <div id="thanks" class="clearfix">
+      <span>Thanks for doing that!</span>
+      <a href="#" id="no-problem">No problem</a>
+    </div>
+    {% endif %}
+    {% if delete %}
+    <div id="thanks" class="clearfix">
+      <span>I've deleted that for you</span>
+      <a href="#" id="no-problem">Thanks</a>
+    </div>
+    {% endif %}
+    <div id="add-success">
+      <form action="/" method="post" id="done-form">
+        <div class="add-success-input clearfix">
+          <label for="id_description">What did you do?</label>
+          <textarea id="id_description" name="description" rows="5" cols="60"></textarea>
+          <input type="submit" value="Done" />
+        </div>
+      </form>
+    </div>
+    <div id="what-ive-done" class="clearfix">
+      <h3>What <span id="whats-done">{% if not disable_friends and has_friends %}we've{% else %}I've{% endif %}</span> done:</h3>
+      <form id="with-friends-form" method="post" action=".">
+        <div id="with-friends">
+          <img src="/media/images/loading.gif" alt="Loading" title="Loading" id="loading-friends" style="display: none;" />
+          <input type="checkbox" id="with-friends-check"{% if not disable_friends %} checked="checked"{% endif %} /><label for="with-friends-check"> with friends</label>
+        </div>
+      </form>
+      <div id="done-nav">
+        <ul>
+          <li><a href="#today" class="active" id="today-nav">Today</a></li>
+          <li><a href="#yesterday" id="yesterday-nav">Yesterday</a></li>
+          <li><a href="#past7days" id="past7days-nav">Past 7 days</a></li>
+          <li><a href="#this-month" id="thismonth-nav">This month</a></li>
+          <li><a href="#last-month" id="lastmonth-nav">Last month</a></li>
+        </ul>
+      </div>
+      <div id="done-list">
+        <div id="today">
+          {% if successes_today %}
+          <ul>
+            {% for success in successes_today %}
+              <li class="clearfix{% if success.friend %} friend{% endif %}"{% if disable_friends and success.friend %} style="display: none;"{% endif %}>
+                <p class="success">
+                  <span></span>
+                  {% if success.friend %}{{ success.user.username }} {% endif %}{{ success.description }}
+                </p>
+                {% if not success.friend %}
+                  <a href="/delete/{{ success.id }}">
+                    <img src="/media/images/delete.png" alt="Delete" title="Delete" />
+                  </a>
+                {% endif %}
+                <span class="done-on">{{ success.completed_on|timesince }} ago</span>
+              </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <div class="do-something">You haven't done anything today!  Get to work!</div>
+          {% endif %}
+        </div>
+        <div id="yesterday" style="display: none;">
+          {% if successes_yesterday %}
+          <ul>
+            {% for success in successes_yesterday %}
+              <li class="clearfix{% if success.friend %} friend{% endif %}"{% if disable_friends and success.friend %} style="display: none;"{% endif %}>
+                <p class="success">
+                  <span></span>
+                  {% if success.friend %}{{ success.user.username }} {% endif %}{{ success.description }}
+                </p>
+                {% if not success.friend %}
+                  <a href="/delete/{{ success.id }}">
+                    <img src="/media/images/delete.png" alt="Delete" title="Delete" />
+                  </a>
+                {% endif %}
+                <span class="done-on">yesterday at {{ success.completed_on|date:"P" }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <div class="do-something">You you didn't do anything yesterday!  You fail!</div>
+          {% endif %}
+        </div>
+        <div id="past7days" style="display: none;">
+          {% if successes_this_week %}
+          <ul>
+            {% for success in successes_this_week %}
+              <li class="clearfix{% if success.friend %} friend{% endif %}"{% if disable_friends and success.friend %} style="display: none;"{% endif %}>
+                <p class="success">
+                  <span></span>
+                  {% if success.friend %}{{ success.user.username }} {% endif %}{{ success.description }}
+                </p>
+                {% if not success.friend %}
+                  <a href="/delete/{{ success.id }}">
+                    <img src="/media/images/delete.png" alt="Delete" title="Delete" />
+                  </a>
+                {% endif %}
+                <span class="done-on">{{ success.completed_on|date:"D" }} at {{ success.completed_on|date:"P" }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <div class="do-something">You haven't done anything the past 7 days!  What a bum!</div>
+          {% endif %}
+        </div>
+        <div id="thismonth" style="display: none;">
+          {% if successes_this_month %}
+          <ul>
+            {% for success in successes_this_month %}
+              <li class="clearfix{% if success.friend %} friend{% endif %}"{% if disable_friends and success.friend %} style="display: none;"{% endif %}>
+                <p class="success">
+                  <span></span>
+                  {% if success.friend %}{{ success.user.username }} {% endif %}{{ success.description }}
+                </p>
+                {% if not success.friend %}
+                  <a href="/delete/{{ success.id }}">
+                    <img src="/media/images/delete.png" alt="Delete" title="Delete" />
+                  </a>
+                {% endif %}
+                <span class="done-on">{{ success.completed_on|date:"D" }}, {{ success.completed_on|date:"M j" }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <div class="do-something">You haven't done anything this month!  Find a job!</div>
+          {% endif %}
+        </div>
+        <div id="lastmonth" style="display: none;">
+          {% if successes_last_month %}
+          <ul>
+            {% for success in successes_last_month %}
+              <li class="clearfix{% if success.friend %} friend{% endif %}"{% if disable_friends and success.friend %} style="display: none;"{% endif %}>
+                <p class="success">
+                  <span></span>
+                  {% if success.friend %}{{ success.user.username }} {% endif %}{{ success.description }}
+                </p>
+                {% if not success.friend %}
+                  <a href="/delete/{{ success.id }}">
+                    <img src="/media/images/delete.png" alt="Delete" title="Delete" />
+                  </a>
+                {% endif %}
+                <span class="done-on">{{ success.completed_on|date:"D" }}, {{ success.completed_on|date:"M j" }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <div class="do-something">You didn't do anything last month!  Get a life!</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+{% endblock %}
+
+{% block sub_footer %}
+  {% if user.is_authenticated %}
+    {% include "sub_footer.html" %}
+  {% endif %}
+{% endblock %}

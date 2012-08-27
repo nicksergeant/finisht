@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block js %}
+<script type="text/javascript">var activeLogin = 'Signup';</script>
+{% endblock %}
+
+{% block content %}
+  <div id="auth-page">
+    <div id="login-signup">
+      <h3><a id="login" href="/login/">Login</a> or <span id="signup">Signup</span></h3>
+      {% include "auth_form.html" %}
+    </div>
+  </div>
+{% endblock %}

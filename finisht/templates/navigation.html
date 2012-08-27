@@ -1,0 +1,9 @@
+<div id="navigation" class="clearfix">
+  {% if not home %}<a class="friends-back" href="/">Back to work</a>{% endif %}
+  <div id="hello">Hey there, {{ user.username }}!</div>
+  <ul>
+    <li><a class="friends" href="/friends/">Friends</a></li>
+    <li><a class="friends" href="/tools/">Tools</a></li>
+    <li><a class="logout" href="/logout/">Logout</a></li>
+  </ul>
+</div>

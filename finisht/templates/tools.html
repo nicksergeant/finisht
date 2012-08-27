@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block body_styles %} id="tools"{% if user.is_authenticated %} class="logged-in"{% endif %}{% endblock %}
+
+{% block content %}
+  <div id="main" class="clearfix">
+    {% include "navigation.html" %}
+    <h3>Tools</h3>
+    <div id="tools-list">
+      <ul>
+        <li class="clearfix">
+          <p>
+            Bookmarklet:
+            <a href="javascript:var%20d=document,w=window,l=d.location,u='http://finisht.com/';a=function(){if(!w.open(u,'t','toolbar=0,resizable=0,status=1,width=778,height=312'))l.href=u;};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();void(0)">Done</a> <span>(drag to Firefox or Safari bookmarks)</span>
+          </p>
+        </li>
+      </ul>
+    </div>
+  </div>
+{% endblock %}
+
+{% block sub_footer %}
+  {% if user.is_authenticated %}
+    {% include "sub_footer.html" %}
+  {% endif %}
+{% endblock %}

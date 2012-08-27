@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block body_styles %} id="friends"{% if user.is_authenticated %} class="logged-in"{% endif %}{% endblock %}
+
+{% block content %}
+  <div id="main" class="clearfix">
+    {% include "navigation.html" %}
+    {% if request.GET %}
+    <div id="thanks" class="clearfix">
+      <span>Sorry it didn't work out.</span>
+      <a href="#" id="no-problem">It's okay</a>
+    </div>
+    {% endif %}
+    <a href="#" id="add-friend">Add friend</a>
+    <h3>Friends</h3>
+    <form id="friend" method="post" action=".">
+      <div id="add-friend-form" style="display: none">
+        <label for="friend-input">Request to be friends with: </label>
+        <select name="friend_user" id="id_friend_user">
+          <option value="" selected="selected">-- select --</option>
+          {% for enemy in enemies %}
+            <option value="{{ enemy.id }}">{{ enemy.username }}</option>
+          {% endfor %}
+        </select>
+        <input type="submit" id="submit" name="submit" value="Do it!" />
+      </div>
+    </form>
+    <div id="friends-list">
+    {% if friend_list %}
+      <ul>
+      {% for friend in friend_list %}
+        <li class="clearfix">
+          <p>
+            {% if friend.main_username %}
+              <span style="color: {% if friend.pending %}blue{% else %}black{% endif %}">{{ friend.main_username }}</span>
+            {% else %}
+              {{ friend.friend_user }}
+            {% endif %}
+            {% if friend.pending %}
+              <span> (pending){% if friend.main_username %} <a href="/friends/approve/{{ friend.id }}">approve</a>{% endif %}</span>
+            {% endif %}
+          </p>
+          <a href="/friends/delete/{{ friend.id }}" class="delete"><img src="/media/images/delete.png" alt="Delete" title="Delete" /></a></li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p class="loser-no-friends">You have no friends!  Start meeting people, or <a href="#add-friend" id="add-friend-link">add a friend</a>.</div>
+    {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block sub_footer %}
+  {% if user.is_authenticated %}
+    {% include "sub_footer.html" %}
+  {% endif %}
+{% endblock %}
