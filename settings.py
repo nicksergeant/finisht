@@ -97,3 +97,8 @@ INSTALLED_APPS = (
     'finisht.friend',
     'gunicorn',
 )
+
+try:
+    from local_settings import *
+except ImportError:
+    pass

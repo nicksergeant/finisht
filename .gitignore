@@ -1,6 +1,8 @@
+*.log
 *.pid
 *.pyc
 *.swp
+*.un~
 fabfile.py
 local_settings.py
 logs
